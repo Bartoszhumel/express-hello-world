@@ -25,7 +25,7 @@ const url = oauth2Client.generateAuthUrl({
 });
 
 app.get('/', (req, res) => {
-    var outh2 = google.outh2({auth: oauth2Client, version: 'v2'});
+    var outh2 = google.oauth2({auth: oauth2Client, version: 'v2'});
     outh2.userinfo.get(function(err, response) {
         if (err) {
             console.log('The API returned an error: ' + err);
