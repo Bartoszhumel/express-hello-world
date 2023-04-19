@@ -39,11 +39,8 @@ app.get('/', (req, res) => {
             loggedInUser = response.data.name;
             console.log(loggedInUser);
         }
-        html='<!DOCTYPE html><html>' +
-            '<head><title>Google Login</title></head>' +
-            '<body><h1>Google Login</h1><p>Logged in as: '+loggedInUser+'</p>' +
-            '<a href="/logout">Logout</a>'+
-            '</body></html>';
+        html='<p>Logged in as: '+loggedInUser+'</p>' +
+            '<a href="/logout">Logout</a>';
         res.send(html);
         });
     }
