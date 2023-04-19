@@ -26,7 +26,7 @@ var authed = false;
 app.get('/', (req, res) => {
     if(!authed) {
         console.log("przekierowanie")
-        res.redirect(url);
+        res.send('<a href="/auth/google/callback">Login</a>');
     }else
     {
         console.log("zalogowany")
@@ -39,10 +39,23 @@ app.get('/', (req, res) => {
             loggedInUser = response.data.name;
             console.log(loggedInUser);
         }
-        res.send('LOgged in: '.concat(loggedInUser));
+        html='<!DOCTYPE html><html>' +
+            '<head><title>Google Login</title></head>' +
+            '<body><h1>Google Login</h1><p>Logged in as: '+loggedInUser+'</p>' +
+            '<a href="/logout">Logout</a>'+
+            '</body></html>';
+        res.send(html);
         });
     }
-})
+});
+app.get('/logout', function (req, res) {
+    let auth2 = google.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+    alert("googleLogout done.");
+});
+
 app.get('/auth/google/callback', function (req, res) {
     console.log("przekierowano")
     const code = req.query.code
