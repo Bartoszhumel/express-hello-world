@@ -23,26 +23,34 @@ const url = oauth2Client.generateAuthUrl({
     // If you only need one scope you can pass it as a string
     scope: scopes
 });
+var authed = false;
 
 app.get('/', (req, res) => {
-    var outh2 = google.oauth2({auth: oauth2Client, version: 'v2'});
-    outh2.userinfo.get(function(err, response) {
-        if (err) {
-            console.log('The API returned an error: ' + err);
+    if(!authed) {
+        res.redirect(url);
+    }else
+    {
+        var oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
+        oauth2.userinfo.v2.me.get(function(err, response) {
+        if(err) {
+            console.log(err);
             return;
+        }else{
+            loggedInUser = response.data.name;
+            console.log(loggedInUser);
         }
-        else{
-            loggedUser = response.data.name;
-            console.log(loggedUser);
-        }
-    });
+        res.send('LOgged in: '.concat(loggedInUser));
+        });
+
+    }
 })
+
 
 app.get('/auth/google/callback', function (req, res) {
     const code = req.query.code
     if (code) {
         // Get an access token based on our OAuth code
-        oAuth2Client.getToken(code, function (err, tokens) {
+        oauth2Client.getToken(code, function (err, tokens) {
             if (err) {
                 console.log('Error authenticating')
                 console.log(err);
