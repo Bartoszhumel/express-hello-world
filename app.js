@@ -25,8 +25,7 @@ var authed = false;
 
 app.get('/', (req, res) => {
     if(!authed) {
-        console.log("przekierowanie")
-        res.send('<a href="/auth/google/callback">Login</a>');
+        res.redirect('/auth/google/callback');
     }else
     {
         console.log("zalogowany")
