@@ -4,31 +4,28 @@ const OAuth2Data = require('./google_key.json')
 const app = express();
 const port = process.env.PORT || 3001;
 
-const CLIENT_ID = OAuth2Data.client.id;
-const CLIENT_SECRET = OAuth2Data.client.secret;
-const REDIRECT_URL = OAuth2Data.client.redirect;
+const oauth2Client = new google.auth.OAuth2(
+    YOUR_CLIENT_ID,
+    YOUR_CLIENT_SECRET,
+    YOUR_REDIRECT_URL
+);
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
-var authed = false;
 
 // app.get("/", (req, res) => res.type('html').send(html));
-const url = oAuth2Client.generateAuthUrl({
+const scopes = [
+    'https://www.googleapis.com/auth/webmaster'
+];
+
+const url = oauth2Client.generateAuthUrl({
+    // 'online' (default) or 'offline' (gets refresh_token)
     access_type: 'offline',
-    scope: 'https://www.googleapis.com/auth/userinfo.profile'
+    // If you only need one scope you can pass it as a string
+    scope: scopes
 });
 
 app.get('/', (req, res) => {
-    var outh2 = google.oauth2({auth: oAuth2Client,version:'v2'});
-    outh2.userinfo.v2.me.get(function (err, result) {
-        if (err) {
-            console.log(err);
-        } else {
-            loggedUser = result.data.name;
-            console.log(loggedUser);
-            res.send('Logged in:'.concat(loggedUser,'<img src="',result.data.picture,'"height="23" width="23">'))
-        }
-    });
-
+    console.log("start")
+    console.log(url)
 })
 
 app.get('/auth/google/callback', function (req, res) {
