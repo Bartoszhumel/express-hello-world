@@ -14,7 +14,7 @@ const oauth2Client = new google.auth.OAuth2(
 
 // app.get("/", (req, res) => res.type('html').send(html));
 const scopes = [
-    'https://www.googleapis.com/auth/webmaster'
+    'https://www.googleapis.com/auth/userinfo.profile'
 ];
 
 const url = oauth2Client.generateAuthUrl({
@@ -25,8 +25,17 @@ const url = oauth2Client.generateAuthUrl({
 });
 
 app.get('/', (req, res) => {
-    console.log("start")
-    console.log(url)
+    var outh2 = google.outh2({auth: oauth2Client, version: 'v2'});
+    outh2.userinfo.get(function(err, response) {
+        if (err) {
+            console.log('The API returned an error: ' + err);
+            return;
+        }
+        else{
+            loggedUser = response.data.name;
+            console.log(loggedUser);
+        }
+    });
 })
 
 app.get('/auth/google/callback', function (req, res) {
