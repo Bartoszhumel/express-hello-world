@@ -6,9 +6,9 @@ const port = process.env.PORT || 3001;
 
 
 const oauth2Client = new google.auth.OAuth2(
-    OAuth2Data.client_id,
-    OAuth2Data.secret,
-    OAuth2Data.redirect
+    OAuth2Data.web.client_id,
+    OAuth2Data.web.client_secret,
+    OAuth2Data.web.redirect_uris[0]
 );
 
 
