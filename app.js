@@ -4,6 +4,10 @@ const OAuth2Data = require('./google_key.json')
 const app = express();
 const port = process.env.PORT || 3001;
 
+YOUR_CLIENT_ID= OAuth2Data.client_id
+YOUR_CLIENT_SECRET= OAuth2Data.secret
+YOUR_REDIRECT_URL= OAuth2Data.redirect
+
 const oauth2Client = new google.auth.OAuth2(
     YOUR_CLIENT_ID,
     YOUR_CLIENT_SECRET,
