@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 const express = require('express');
 const OAuth2Data = require('./google_key.json')
 const app = express();
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3002;
 
 
 const oauth2Client = new google.auth.OAuth2(
@@ -25,9 +25,11 @@ var authed = false;
 
 app.get('/', (req, res) => {
     if(!authed) {
+        console.log("przekierowanie")
         res.redirect(url);
     }else
     {
+        console.log("zalogowany")
         var oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
         oauth2.userinfo.v2.me.get(function(err, response) {
         if(err) {
@@ -42,6 +44,10 @@ app.get('/', (req, res) => {
     }
 })
 app.get('/auth/google/callback', function (req, res) {
+    console.log("przekierowano")
+    const code = req.query.code
+    if (code) {
+        console.log("po otrzymaniu kodu")
         oauth2Client.getToken(code, function (err, tokens) {
             if (err) {
                 console.log('Error authenticating')
@@ -53,6 +59,7 @@ app.get('/auth/google/callback', function (req, res) {
                 res.redirect('/')
             }
         });
+    }
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
