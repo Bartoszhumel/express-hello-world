@@ -44,6 +44,12 @@ app.get('/', (req, res) => {
 });
 app.get('/logout', function (req, res) {
     console.log("wylogowanie")
+    var auth2 = google.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+        res.redirect('/')
+    });
+    alert("googleLogout done.");
     authed = false;
 });
 
