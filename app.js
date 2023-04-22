@@ -27,7 +27,6 @@ app.get('/', (req, res) => {
     }else
     {
         console.log("zalogowany")
-        google.auth2.init();
         oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
         oauth2.userinfo.v2.me.get(function(err, response) {
         if(err) {
@@ -38,7 +37,7 @@ app.get('/', (req, res) => {
             console.log(loggedInUser);
         }
         html='<p>Logged in as: '+loggedInUser+'</p>' +
-            '<a href="#" onclick="signOut();">Sign out</a>\n';
+            '<a href="/" onclick="signOut();">Sign out</a>\n';
         res.send(html);
         });
     }
