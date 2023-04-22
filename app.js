@@ -15,17 +15,15 @@ const scopes = [
     'https://www.googleapis.com/auth/userinfo.profile'
 ];
 
-const url = oauth2Client.generateAuthUrl({
-    // 'online' (default) or 'offline' (gets refresh_token)
-    access_type: 'offline',
-    // If you only need one scope you can pass it as a string
-    scope: scopes
-});
 var authed = false;
 
 app.get('/', (req, res) => {
     if(!authed) {
-        res.redirect('/auth/google/callback');
+        const url = oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: 'https://www.googleapis.com/auth/userinfo.profile'
+        });
+        res.redirect(url);
     }else
     {
         console.log("zalogowany")
@@ -45,11 +43,8 @@ app.get('/', (req, res) => {
     }
 });
 app.get('/logout', function (req, res) {
-    let auth2 = google.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-        console.log('User signed out.');
-    });
-    alert("googleLogout done.");
+    console.log("wylogowanie")
+    authed = false;
 });
 
 app.get('/auth/google/callback', function (req, res) {
@@ -68,6 +63,8 @@ app.get('/auth/google/callback', function (req, res) {
                 res.redirect('/')
             }
         });
+    }else{
+        console.log("nie ma kodu")
     }
 });
 
