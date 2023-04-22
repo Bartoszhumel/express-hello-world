@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Google profile</title>
+</head>
+<body>
+    <h1>Welcome</h1>
+    <h2 id="name"> Zalogowano:</h2>
+    <img id="image"/>
+    <button onclick="signOut()">Sign out</button>
+</body>
+<script>
+    let params={}
+
+    let regex=/([^&=]+)=([^&]*)/g, m;
+    while (m=regex.exec(location.href)) {
+        params[decodeURIComponent(m[1])]=decodeURIComponent(m[2]);
+    }
+    if(Object.keys(params).length>0) {
+        localStorage.setItem('authInfo', JSON.stringify(params));
+    }
+    window.history.pushState({}, document.title, "/auth/google/callback");
+    let info = JSON.parse(localStorage.getItem('authInfo'));
+
+    fetch("https://www.googleapis.com/oauth2/v3/userinfo",{
+        headers: {
+            Authorization: `Bearer ${info["access_token"]}`
+        }
+    }).then((data)=>data.json)
+        .then((info)=>{
+            document.getElementById("name").innerHTML+=info.name;
+            document.getElementById("image").setAttribute("src", info.picture);
+        })
+    function signOut() {
+        fetch("https://accounts.google.com/revoke?token="+info["access_token"],{
+            method: "POST",
+            headers:{
+                "Content-type": "application/x-www-form-urlencoded"
+            }
+        }).then((data)=>{
+            location.href = "/"
+        })
+    }
+</script>
+</html>
