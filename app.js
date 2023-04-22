@@ -16,7 +16,7 @@ const scopes = [
 ];
 
 var authed = false;
-
+var oauth2;
 app.get('/', (req, res) => {
     if(!authed) {
         const url = oauth2Client.generateAuthUrl({
@@ -27,7 +27,8 @@ app.get('/', (req, res) => {
     }else
     {
         console.log("zalogowany")
-        var oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
+        google.auth2.init();
+        oauth2 = google.oauth2({auth: oauth2Client, version: 'v2'});
         oauth2.userinfo.v2.me.get(function(err, response) {
         if(err) {
             console.log(err);
@@ -37,21 +38,17 @@ app.get('/', (req, res) => {
             console.log(loggedInUser);
         }
         html='<p>Logged in as: '+loggedInUser+'</p>' +
-            '<a href="/logout">Logout</a>';
+            '<a href="#" onclick="signOut();">Sign out</a>\n';
         res.send(html);
         });
     }
 });
-app.get('/logout', function (req, res) {
-    console.log("wylogowanie")
-    var auth2 = google.auth2.getAuthInstance();
+function signOut() {
+    var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
         console.log('User signed out.');
-        res.redirect('/')
     });
-    alert("googleLogout done.");
-    authed = false;
-});
+}
 
 app.get('/auth/google/callback', function (req, res) {
     console.log("przekierowano")
