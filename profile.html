@@ -29,6 +29,7 @@
         }
     }).then((data)=>data.json)
         .then((info)=>{
+            console.log(info);
             document.getElementById("name").innerHTML+=info.name;
             document.getElementById("image").setAttribute("src", info.picture);
         })

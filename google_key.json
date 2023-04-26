@@ -1,13 +1,10 @@
 {
-  "web": {
-    "client_id":"369812068364-4vc5vokpl8hv7b47kof1v70okfi864vm.apps.googleusercontent.com",
-  "project_id":"lab6-383514",
-  "auth_uri":"https://accounts.google.com/o/oauth2/auth",
-  "token_uri":"https://oauth2.googleapis.com/token",
-  "auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs",
-  "client_secret":"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",
-  "redirect_uris":["https://lab6-set3.onrender.com/auth/google/callback"],
-  "javascript_origins":["https://lab6-set3.onrender.com"]},
+  "client": {
+    "id": "409477520251-f6ods0d184lbp9lf3vvc9tmle6rt4bbt.apps.googleusercontent.com",
+    "secret": "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",
+    "redirect": "http://localhost:5000/auth/google/callback"
+  },
+
   "credentials": {
     "access_token": "your access_token",
     "token_type": "Bearer",
