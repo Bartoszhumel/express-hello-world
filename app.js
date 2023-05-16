@@ -211,6 +211,7 @@ app.get('/success', function(req, res) {
         console.log(data);
         let array=[];
         let flag = false;
+        const loggedInUser = response.data.login;
         for(var o in data.rows) {
             array.push(Object.values(data.rows[o]));
             if(array[o][1] === loggedInUser){
