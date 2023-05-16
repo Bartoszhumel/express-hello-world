@@ -1,0 +1,32 @@
+<!-- views/success.ejs -->
+<!doctype html>
+<html>
+<head>
+    <title>Github OAuth</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"> <!-- load bulma css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- load fontawesome -->
+    <style>
+        body        { padding-top:70px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <p><%=loggedInUser%></p>
+    <img src="<%=profilePic%>" height="40" width="40" alt="zdj profilowe"><br>
+    <a href="/logout">Logout</a>
+    <div class="timeline-table">
+        <table class="table table-striped">
+            <tbody>
+            <%users.forEach(row=>{%>
+            <%row.forEach(value=>{%>
+                <td><%= value %></td>
+            <%})%>
+            </tr>
+            <%})%>
+
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

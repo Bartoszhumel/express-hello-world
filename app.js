@@ -42,6 +42,73 @@ function revokeToken(){
     postReq.write(postData);
     postReq.end();
 }
+
+const { Pool } = require("pg");
+const dotenv = require("dotenv");
+dotenv.config();
+let data = [];
+const connectDb = async () => {
+    try {
+        const pool = new Pool({
+            user: process.env.POST_DATABASE_USER,
+            host: process.env.POST_DATABASE_HOST,
+            database: process.env.POST_DATABASE,
+            password: process.env.POST_DATABASE_PASSWORD,
+            port: process.env.POST_DATABASE_PORT,
+            ssl:true
+        });
+
+        await pool.connect()
+        data = await pool.query('SELECT * FROM users')
+        await pool.end()
+    } catch (error) {
+        console.log(error)
+    }
+}
+const updateuser = async (nazwa) => {
+    console.log("Connecting to database");
+    console.log(nazwa)
+    try {
+        const pool = new Pool({
+            user: process.env.POST_DATABASE_USER,
+            host: process.env.POST_DATABASE_HOST,
+            database: process.env.POST_DATABASE,
+            password: process.env.POST_DATABASE_PASSWORD,
+            port: process.env.POST_DATABASE_PORT,
+            ssl:true
+        });
+        await pool.connect()
+        const today = new Date();
+        const res = await pool.query("UPDATE users SET lastvisit = $1,counter = counter + 1 WHERE name = $2", [today,nazwa]);
+        await pool.end()
+    } catch (error) {
+        console.log(error)
+    }
+}
+const insertuser = async (nazwa) => {
+    console.log("Connecting to database");
+    console.log(nazwa)
+    try {
+        const pool = new Pool({
+            user: process.env.POST_DATABASE_USER,
+            host: process.env.POST_DATABASE_HOST,
+            database: process.env.POST_DATABASE,
+            password: process.env.POST_DATABASE_PASSWORD,
+            port: process.env.POST_DATABASE_PORT,
+            ssl: true
+        });
+        await pool.connect()
+        await pool.connect()
+        const today = new Date();
+        const res = await pool.query("INSERT INTO users (name, joined, lastvisit, counter) VALUES ($1, $2, $3, $4)", [nazwa, today, today, 0]);
+        console.log(res)
+        await pool.end()
+    } catch (error) {
+        console.log(error)
+    }
+
+}
+
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 });
@@ -52,7 +119,6 @@ app.get('/login', (req, res) => {
             access_type: 'offline',
             scope: 'https://www.googleapis.com/auth/userinfo.profile'
         });
-        console.log(url)
         res.redirect(url);
     } else {
         var oauth2 = google.oauth2({auth: oAuth2Client, version: 'v2'});
@@ -63,7 +129,22 @@ app.get('/login', (req, res) => {
             console.log(response.data);
             loggedInUser = response.data.name;
             profilePic = response.data.picture;
-            res.send(loggedInUser + '<img src="'+ profilePic +'"height="23" width="23">'+ '<br>' + '<a href="/logout">Logout</a>');
+            connectDb().then();
+            console.log(data);
+            let array=[];
+            let flag = false;
+            for(var o in data.rows) {
+                array.push(Object.values(data.rows[o]));
+                if(array[o][1] === loggedInUser){
+                    flag = true;
+                }
+            }
+            if(flag === false){
+                insertuser(loggedInUser).then();
+            }else{
+                updateuser(loggedInUser).then();
+            }
+            res.render('googleSucess',{ loggedInUser:loggedInUser,profilePic:profilePic, users: array});
         }
         });
     }
@@ -126,7 +207,23 @@ app.get('/success', function(req, res) {
             Authorization: 'token ' + access_token
         }
     }).then((response) => {
-        res.render('githubSucess',{ userData: response.data });
+        connectDb().then();
+        console.log(data);
+        let array=[];
+        let flag = false;
+        for(var o in data.rows) {
+            array.push(Object.values(data.rows[o]));
+            if(array[o][1] === loggedInUser){
+                flag = true;
+            }
+        }
+        if(flag === false){
+            insertuser(loggedInUser).then();
+        }else{
+            updateuser(loggedInUser).then();
+        }
+
+        res.render('githubSucess',{ userData: response.data , users: array});
     })
 });
 
