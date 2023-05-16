@@ -1,47 +1,16 @@
 const { google } = require('googleapis');
 const express = require('express')
-const OAuth2Data = require('./google_key.json')
-const https = require('https');
 const app = express()
 const axios = require('axios')
 
-const CLIENT_ID = OAuth2Data.client.id;
-const CLIENT_SECRET = OAuth2Data.client.secret;
-const REDIRECT_URL = OAuth2Data.client.redirect
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const REDIRECT_URL = process.env.REDIRECT_URL;
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL)
 var authed = false;
 let loggedInUser = '';
 let profilePic = '';
-function revokeToken(){
-    let postData = "token=" + oAuth2Client.access_token;
-
-    let postOptions = {
-        host: 'oauth2.googleapis.com',
-        port: '443',
-        path: '/revoke',
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': Buffer.byteLength(postData)
-        }
-    };
-
-    const postReq = https.request(postOptions, function (res) {
-        res.setEncoding('utf8');
-        res.on('data', d => {
-            console.log('Response: ' + d);
-        });
-    });
-
-    postReq.on('error', error => {
-        console.log(error)
-    });
-
-// Post the request with data
-    postReq.write(postData);
-    postReq.end();
-}
 
 const { Pool } = require("pg");
 const dotenv = require("dotenv");
@@ -176,16 +145,14 @@ app.get('/auth/google/callback', function (req, res) {
 });
 
 app.set('view engine', 'ejs');
-const clientID = '3f6b31177b7273d28e45'
-const clientSecret = '1371431f0f22c8776f897e4d1477c93419610e6d'
+const clientID = process.env.GIT_CLIENT_ID
+const clientSecret = process.env.GIT_CLIENT_SECRET
 app.get('/github/callback', function (req, res) {
-    // The req.query object has the query params that were sent to this route.
     const requestToken = req.query.code
     if(!authed) {
     axios({
         method: 'post',
         url: `https://github.com/login/oauth/access_token?client_id=${clientID}&client_secret=${clientSecret}&code=${requestToken}&prompt=consent`,
-        // Set the content type header, so that we get the response in JSON
         headers: {
             accept: 'application/json'
         }
