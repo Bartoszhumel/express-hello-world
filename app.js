@@ -146,6 +146,7 @@ app.get('/auth/google/callback', function (req, res) {
 
 app.set('view engine', 'ejs');
 const clientID = process.env.GIT_CLIENT_ID
+let access_token = ''
 const clientSecret = process.env.GIT_CLIENT_SECRET
 app.get('/github/callback', function (req, res) {
     const requestToken = req.query.code
